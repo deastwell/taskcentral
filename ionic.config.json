@@ -1,0 +1,7 @@
+{
+  "name": "taskcentral",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
