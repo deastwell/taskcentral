@@ -19,7 +19,7 @@ import { addDoc } from 'firebase/firestore';
 export class AddUpdateNoteComponent implements OnInit {
 
   newNote: Note = {
-    id: '', // Might be needed depending on your Firestore setup
+    id: '', 
     title: '',
     content: '',
   };
@@ -51,13 +51,26 @@ export class AddUpdateNoteComponent implements OnInit {
         console.log('User:', user);
 
         if (user) {
-          try {
-            await this.firebaseSvc.addNoteToUser(this.newNote);
-            console.log('Note saved successfully:', this.newNote);
-            this.modalCtrl.dismiss({ savedNote: this.newNote });
-          } catch (err) {
-            console.error('Error saving note:', err);
-            // Handle errors appropriately (e.g., show error message using a toast)
+          if (this.newNote.id) {
+            // Update existing note
+            try {
+              await this.firebaseSvc.updateNoteForUser(user.uid, this.newNote);
+              console.log('Note updated successfully:', this.newNote);
+              this.modalCtrl.dismiss({ savedNote: this.newNote });
+            } catch (err) {
+              console.error('Error updating note:', err);
+              // Handle errors appropriately (e.g., show error message using a toast)
+            }
+          } else {
+            // Create new note
+            try {
+              await this.firebaseSvc.addNoteToUser(this.newNote);
+              console.log('Note saved successfully:', this.newNote);
+              this.modalCtrl.dismiss({ savedNote: this.newNote });
+            } catch (err) {
+              console.error('Error saving note:', err);
+              // Handle errors appropriately (e.g., show error message using a toast)
+            }
           }
         } else {
           console.error('No user found in local storage');
@@ -69,5 +82,4 @@ export class AddUpdateNoteComponent implements OnInit {
       console.log('Note title or content is empty');
     }
   }
-
 }

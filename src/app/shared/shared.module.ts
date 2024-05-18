@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
@@ -17,7 +17,8 @@ import { AddUpdateNoteComponent } from './components/add-update-note/add-update-
     CustomInputComponent,
     LogoComponent,
     AddUpdateTaskComponent,
-    AddUpdateNoteComponent
+    AddUpdateNoteComponent,
+    
     
   ],
   exports: [

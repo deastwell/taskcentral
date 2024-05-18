@@ -6,86 +6,95 @@ import { getAuth, updateProfile } from "firebase/auth";
 import { UtilsService } from './utils.service';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
+import { updateDoc, doc, Firestore } from '@angular/fire/firestore';
+import { Note } from '../models/note.model';
+
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
-  firestore(firestore: any, arg1: string, uid: string) {
-    throw new Error('Method not implemented.');
-  }
-  getActiveUser() {
-    throw new Error('Method not implemented.');
-  }
 
   constructor(
     private auth: AngularFireAuth,
     private db: AngularFirestore,
     private utilsSvc: UtilsService
-    
   ) { }
 
   //========= Autenticación ==========
 
   login(user: User) {
-    return this.auth.signInWithEmailAndPassword(user.email, user.password)
+    return this.auth.signInWithEmailAndPassword(user.email, user.password);
   }
 
-
   signUp(user: User) {
-    return this.auth.createUserWithEmailAndPassword(user.email, user.password)
+    return this.auth.createUserWithEmailAndPassword(user.email, user.password);
   }
 
   updateUser(user: any) {
     const auth = getAuth();
-    return updateProfile(auth.currentUser, user)
+    return updateProfile(auth.currentUser, user);
   }
 
-  getAuthState(){
-    return this.auth.authState
+  getAuthState() {
+    return this.auth.authState;
   }
 
-  async signOut(){
+  async signOut() {
     await this.auth.signOut();
+    localStorage.clear(); 
     this.utilsSvc.routerLink('/auth');
     localStorage.removeItem('user');
   }
-  
 
-
-  //============= Firestore (Base de Datos) ==============
-
-  getSubcollection(path: string, subcollectionName: string){
-    return this.db.doc(path).collection(subcollectionName).valueChanges({ idField: 'id' })
+  getSubcollection(path: string, subcollectionName: string) {
+    return this.db.doc(path).collection(subcollectionName).valueChanges({ idField: 'id' });
   }
 
-  addToSubcollection(path: string, subcollectionName: string, object: any){
-    return this.db.doc(path).collection(subcollectionName).add(object)
+  addToSubcollection(path: string, subcollectionName: string, object: any) {
+    return this.db.doc(path).collection(subcollectionName).add(object);
   }
 
-  updateDocument(path: string, object: any){
+  updateDocument(path: string, object: any) {
     return this.db.doc(path).update(object);
   }
 
-  deleteDocument(path: string){
-    return this.db.doc(path).delete()
+  deleteDocument(path: string) {
+    return this.db.doc(path).delete();
   }
 
+  async addNoteToUser(note: Note) {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
-//========== Note ==========
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
 
-async addNoteToUser(note: any) {
-  const auth = getAuth();
-  const user = auth.currentUser;
+    note['userId'] = user.uid;
+    note['createdAt'] = firebase.firestore.FieldValue.serverTimestamp();
 
-  if (!user) {
-    throw new Error("User not authenticated");
+    const userDocPath = `users/${user.uid}/notes`;
+    const notesRef = this.db.collection(userDocPath);
+    return notesRef.add(note);
   }
 
-  note.userId = user.uid;
-  note.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+  async updateNoteForUser(userId: string, note: Note) {
+    const noteDocRef = this.db.doc(`users/${userId}/notes/${note.id}`).ref;
+    return await updateDoc(noteDocRef, {
+      title: note.title,
+      content: note.content
+    });
+  }
 
-  const userDocPath = `users/${user.uid}/notes`;
-  const notesRef = this.db.collection(userDocPath);
-  return notesRef.add(note);
-}
+  async deleteNoteById(userId: string, noteId: string) {
+    const notePath = `users/${userId}/notes/${noteId}`;
+    console.log('Deleting note with path:', notePath);
+    try {
+      await this.db.doc(notePath).delete();
+      console.log('Note deleted from Firestore:', notePath);
+    } catch (error) {
+      console.error('Error deleting note from Firestore:', error);
+      throw error;
+    }
+  }
 }
