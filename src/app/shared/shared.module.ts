@@ -8,6 +8,7 @@ import { CustomInputComponent } from './components/custom-input/custom-input.com
 import { LogoComponent } from './components/logo/logo.component';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { AddUpdateTaskComponent } from './components/add-update-task/add-update-task.component';
+import { AddUpdateNoteComponent } from './components/add-update-note/add-update-note.component';
 
 
 @NgModule({
@@ -15,14 +16,18 @@ import { AddUpdateTaskComponent } from './components/add-update-task/add-update-
     HeaderComponent,
     CustomInputComponent,
     LogoComponent,
-    AddUpdateTaskComponent
+    AddUpdateTaskComponent,
+    AddUpdateNoteComponent
+    
   ],
   exports: [
     HeaderComponent,
     CustomInputComponent,
     LogoComponent,
     NgCircleProgressModule,
-    AddUpdateTaskComponent
+    AddUpdateTaskComponent,
+    AddUpdateNoteComponent
+    
   ],
   imports: [
     CommonModule,

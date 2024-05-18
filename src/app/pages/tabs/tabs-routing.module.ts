@@ -16,8 +16,17 @@ const routes: Routes = [
         path: 'profile',
         loadChildren: () => import('./profile/profile.module').then(m => m.ProfilePageModule)
       },
+      {
+        path: 'notes',
+        loadChildren: () => import('./notes/notes.module').then(m => m.NotesPageModule)
+      },
     ],
   },
+  {
+    path: 'notes',
+    loadChildren: () => import('./notes/notes.module').then( m => m.NotesPageModule)
+  },
+
 ];
 
 @NgModule({

@@ -13,7 +13,7 @@ export class UtilsService {
     private router: Router,
     private toastController: ToastController,
     private alertController: AlertController,
-    private modalController: ModalController
+    private modalController: ModalController, 
   ) { }
 
   // =========== Loading ===========
@@ -86,4 +86,6 @@ export class UtilsService {
 
     return parseInt(percentage.toString()) 
   }
+
+  
 }

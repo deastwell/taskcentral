@@ -9,7 +9,8 @@ export class TabsPage implements OnInit {
 
   tabs = [
     {name: 'Inicio', icon: 'home-outline', tab: 'home'},
-    {name: 'Perfil', icon: 'person-outline', tab: 'profile'}
+    {name: 'Perfil', icon: 'person-outline', tab: 'profile'},
+    {name: 'Notas', icon: 'book-outline', tab: 'notes'}
   ]
 
   constructor() { }

@@ -1,0 +1,29 @@
+<ion-content>
+
+  <app-header title="Notas"></app-header>
+
+  <div class="content">
+
+    <ion-button (click)="addNewNote()" class="ion-margin" mode="ios">
+      Nueva Nota
+      <ion-icon slot="end" name="add-circle-outline"></ion-icon>
+    </ion-button>
+
+    <ion-list *ngIf="notes.length > 0">
+      <ion-item *ngFor="let note of notes">
+        <ion-label>
+          <h2>{{ note.title }}</h2>
+          <p>{{ note.content | slice:0:50 }}...</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-item *ngIf="!notes.length">
+      <ion-label>
+        <ion-icon name="create-outline"></ion-icon>
+        <h4>Aún no tienes notas</h4>
+      </ion-label>
+    </ion-item>
+
+  </div>
+</ion-content>

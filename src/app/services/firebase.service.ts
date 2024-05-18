@@ -4,15 +4,24 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { User } from '../models/user.model';
 import { getAuth, updateProfile } from "firebase/auth";
 import { UtilsService } from './utils.service';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
+  firestore(firestore: any, arg1: string, uid: string) {
+    throw new Error('Method not implemented.');
+  }
+  getActiveUser() {
+    throw new Error('Method not implemented.');
+  }
 
   constructor(
     private auth: AngularFireAuth,
     private db: AngularFirestore,
     private utilsSvc: UtilsService
+    
   ) { }
 
   //========= Autenticación ==========
@@ -60,4 +69,23 @@ export class FirebaseService {
   deleteDocument(path: string){
     return this.db.doc(path).delete()
   }
+
+
+//========== Note ==========
+
+async addNoteToUser(note: any) {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  note.userId = user.uid;
+  note.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+
+  const userDocPath = `users/${user.uid}/notes`;
+  const notesRef = this.db.collection(userDocPath);
+  return notesRef.add(note);
+}
 }
