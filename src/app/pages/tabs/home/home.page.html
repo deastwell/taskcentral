@@ -22,7 +22,7 @@
     <ion-grid>
       <ion-row>
         <ion-col *ngFor="let task of tasks" size-lg="6" size-md="6" size-sm="12" size="12">
-          <ion-card mode="ios">
+          <ion-card mode="ios" [ngClass]="{'completed-task': getPercentage(task) === 100}">
             <ion-grid>
               <ion-row>
                 <ion-col class="ion-text-center" size-lg="5" size-md="5" size-sm="4" size="12">
@@ -85,11 +85,3 @@
     </ion-grid>
   </div>
 </ion-content>
-
-<style>
-.button-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-</style>

@@ -9,6 +9,7 @@ import 'firebase/compat/firestore';
 import { updateDoc, doc, Firestore } from '@angular/fire/firestore';
 import { Note } from '../models/note.model';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,7 +18,9 @@ export class FirebaseService {
   constructor(
     private auth: AngularFireAuth,
     private db: AngularFirestore,
-    private utilsSvc: UtilsService
+    private utilsSvc: UtilsService,
+    private firestore: AngularFirestore, 
+    private afAuth: AngularFireAuth
   ) { }
 
   //========= Autenticación ==========
@@ -97,4 +100,11 @@ export class FirebaseService {
       throw error;
     }
   }
+
+
+  updateUserProfile(uid: string, data: any) {
+    return this.firestore.collection('users').doc(uid).update(data);
+  }
+
+
 }

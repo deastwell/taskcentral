@@ -1,17 +1,21 @@
-
 <ion-content>
-<app-header title="Perfil"></app-header>
+  <app-header title="Perfil"></app-header>
 
-
-<div class="content ion-text-center">
-
-  <ion-icon class="avatar" name="person-circle-outline"></ion-icon>
-  <h2>{{user.name}} </h2>
-  <div>{{user.email}} </div>
-
-  <ion-button (click)="signOut()"  shape="round">
-    Cerrar Sesión
-    <ion-icon slot="end" name="log-out-outline"></ion-icon>
-  </ion-button>
-</div>
+  <ion-grid class="full-height">
+    <ion-row class="ion-justify-content-center ion-align-items-center full-height">
+      <ion-col size="12" class="ion-text-center">
+        <div class="avatar-container">
+          <img [src]="profilePictureUrl || defaultProfilePicture" alt="Profile Picture" class="avatar"/>
+          <input type="file" accept="image/*" (change)="uploadProfilePicture($event)" hidden #fileInput>
+          <ion-button (click)="fileInput.click()">Subir foto</ion-button>
+        </div>
+        <h2>{{user.name}}</h2>
+        <div>{{user.email}}</div>
+        <ion-button (click)="signOut()" shape="round">
+          Cerrar Sesión
+          <ion-icon slot="end" name="log-out-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

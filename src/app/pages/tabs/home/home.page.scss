@@ -25,3 +25,15 @@ ion-card:hover{
 .empty{
     padding-top: 15vh;
 }
+
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .completed-task {
+   // background-color: #d4edda !important;
+   background-color: #c6ffd3;
+  }
+  
