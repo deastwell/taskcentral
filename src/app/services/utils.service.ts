@@ -27,40 +27,34 @@ export class UtilsService {
     return await this.loadingController.dismiss()
   }
 
-
-
-
  // =========== LocalStorage ===========
  // SET
   setElementInLocalstorage(key: string, element: any) {
+    console.log(`Setting item in local storage with key: ${key}, value:`, element);
     return localStorage.setItem(key, JSON.stringify(element))
   }
 // GET
   getElementFromLocalStorage(key: string){
-    return JSON.parse(localStorage.getItem(key));
+    const item = localStorage.getItem(key);
+    console.log(`Getting item from local storage with key: ${key}, value:`, item);
+    return JSON.parse(item);
   }
-
 
   async presentToast(opts: ToastOptions) {
     const toast = await this.toastController.create(opts);
     toast.present();
   }
 
-
   //======= Router =======
   routerLink(url: string){
     return this.router.navigateByUrl(url);
   }
 
-
-
   // =========== Alert ===========
   async presentAlert(opts: AlertOptions) {
     const alert = await this.alertController.create(opts);
-  
     await alert.present();
   }
-
 
  // =========== Modal ===========
  // PRESENT

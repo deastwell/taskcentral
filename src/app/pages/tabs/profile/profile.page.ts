@@ -5,7 +5,6 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { finalize } from 'rxjs/operators';
 
-
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -14,7 +13,7 @@ import { finalize } from 'rxjs/operators';
 export class ProfilePage implements OnInit {
   user = {} as User;
   profilePictureUrl: string | null = null;
-  defaultProfilePicture = 'assets/icon/userIcon.jpg'; 
+  defaultProfilePicture = 'assets/icon/avatar.png';
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
@@ -25,63 +24,93 @@ export class ProfilePage implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log('ngOnInit called');
     this.user = this.utilsSvc.getElementFromLocalStorage('user');
+    console.log('User loaded from local storage:', this.user);
   }
 
   ionViewWillEnter() {
+    console.log('ionViewWillEnter called');
     this.getUser();
     this.loadProfilePicture();
   }
 
   getUser() {
+    console.log('getUser called');
     this.user = this.utilsSvc.getElementFromLocalStorage('user');
+    console.log('User loaded from local storage:', this.user);
   }
 
   loadProfilePicture() {
-    if (this.user.profilePictureUrl) {
-      this.profilePictureUrl = this.user.profilePictureUrl;
-    } else {
-      this.profilePictureUrl = this.defaultProfilePicture;
-    }
+    console.log('loadProfilePicture called');
+    console.log('Current user object:', this.user);
+    this.profilePictureUrl = this.user.profilePictureUrl ? this.user.profilePictureUrl : this.defaultProfilePicture;
+    console.log('Profile picture URL set to:', this.profilePictureUrl);
   }
 
   async uploadProfilePicture(event: any) {
+    console.log('uploadProfilePicture called with event:', event);
     const file: File = event.target.files[0];
     if (file) {
       const filePath = `profile_pictures/${this.user.uid}_${file.name}`;
+      console.log('File path for upload:', filePath);
       const fileRef = this.storage.ref(filePath);
       const task = this.storage.upload(filePath, file);
 
       // Show loading indicator
+      console.log('Presenting loading indicator');
       this.utilsSvc.presentLoading();
 
       task
         .snapshotChanges()
         .pipe(
           finalize(async () => {
-            this.profilePictureUrl = await fileRef.getDownloadURL().toPromise();
-            this.updateUserProfilePicture(this.profilePictureUrl);
-            this.utilsSvc.dismissLoading();
+            try {
+              this.profilePictureUrl = await fileRef.getDownloadURL().toPromise();
+              console.log('File uploaded, download URL:', this.profilePictureUrl);
+              await this.updateUserProfilePicture(this.profilePictureUrl);
+              console.log('Profile picture URL updated');
+              this.utilsSvc.presentToast({
+                message: 'Profile picture updated successfully!',
+                color: 'success',
+                duration: 2000,
+              });
+            } catch (error) {
+              console.error('Error uploading profile picture:', error);
+              this.utilsSvc.presentToast({
+                message: 'Failed to upload profile picture. Please try again.',
+                color: 'danger',
+                duration: 2000,
+              });
+            } finally {
+              console.log('Dismissing loading indicator');
+              this.utilsSvc.dismissLoading();
+            }
           })
         )
         .subscribe();
+    } else {
+      console.log('No file selected for upload');
     }
   }
 
-  updateUserProfilePicture(url: string) {
+  async updateUserProfilePicture(url: string) {
+    console.log('updateUserProfilePicture called with URL:', url);
     const userUpdate = { profilePictureUrl: url };
-    this.firebaseSvc.updateUserProfile(this.user.uid, userUpdate).then(() => {
+    try {
+      await this.firebaseSvc.updateUserProfile(this.user.uid, userUpdate);
+      console.log('User profile updated in Firestore');
       this.user.profilePictureUrl = url;
       this.utilsSvc.setElementInLocalstorage('user', this.user);
-      this.utilsSvc.presentToast({
-        message: 'Profile picture updated successfully!',
-        color: 'success',
-        duration: 2000,
-      });
-    });
+      console.log('User profile updated in local storage:', this.user);
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      throw error;
+    }
   }
 
   signOut() {
+    console.log('signOut called');
     this.utilsSvc.presentAlert({
       header: 'Cerrar Sesión',
       message: '¿Quieres cerrar sesión?',
@@ -93,6 +122,7 @@ export class ProfilePage implements OnInit {
         }, {
           text: 'Si, cerrar',
           handler: () => {
+            console.log('Sign out confirmed');
             this.firebaseSvc.signOut();
           }
         }

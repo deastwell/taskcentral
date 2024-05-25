@@ -9,7 +9,6 @@ import 'firebase/compat/firestore';
 import { updateDoc, doc, Firestore } from '@angular/fire/firestore';
 import { Note } from '../models/note.model';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -101,10 +100,20 @@ export class FirebaseService {
     }
   }
 
+  async updateUserProfile(uid: string, data: any) {
+    console.log(`Updating user ${uid} with data:`, data);
+    try {
+      const userRef = this.firestore.collection('users').doc(uid);
+      const docSnapshot = await userRef.get().toPromise();
 
-  updateUserProfile(uid: string, data: any) {
-    return this.firestore.collection('users').doc(uid).update(data);
+      if (docSnapshot.exists) {
+        await userRef.update(data);
+      } else {
+        await userRef.set(data); 
+      }
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      throw error;
+    }
   }
-
-
 }
