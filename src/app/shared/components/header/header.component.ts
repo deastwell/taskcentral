@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core'; 
+import { Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UtilsService } from 'src/app/services/utils.service';
@@ -8,7 +8,7 @@ import { UtilsService } from 'src/app/services/utils.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent  implements OnInit {
+export class HeaderComponent implements OnInit {
 
   @Input() title: string;
   @Input() backButton: string;
@@ -16,23 +16,22 @@ export class HeaderComponent  implements OnInit {
   @Input() color: string;
   @Input() centerTitle: boolean;
 
-
   darkMode: BehaviorSubject<boolean>;
+
   constructor(
     private themeSvc: ThemeService,
     private utilsSvc: UtilsService
   ) { }
 
   ngOnInit() {
-
-    this.darkMode = this.themeSvc.darkMode
+    this.darkMode = this.themeSvc.darkMode;
   }
 
-  dismissModal(){
-    this.utilsSvc.dismissModal()
+  dismissModal() {
+    this.utilsSvc.dismissModal();
   }
 
-  setTheme(darkMode: boolean){
-    this.themeSvc.setTheme(darkMode);
+  toggleTheme() {
+    this.themeSvc.toggleTheme();
   }
 }

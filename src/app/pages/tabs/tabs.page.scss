@@ -7,3 +7,20 @@ ion-tab-button{
     --color-selected: var(--ion-color-primary);
     --background: var(--ion-color-light);
 }
+:host {
+    display: block;
+    color: var(--ion-color-primary);
+  }
+  
+  :host-context(body[color-theme='dark']) {
+    color: var(--ion-color-light);
+  }
+  
+  ion-content {
+    --background: var(--ion-color-background);
+  }
+  
+  ion-toolbar {
+    --background: var(--ion-color-primary);
+  }
+  
