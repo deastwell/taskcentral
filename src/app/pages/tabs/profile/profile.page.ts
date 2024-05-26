@@ -11,9 +11,9 @@ import { finalize } from 'rxjs/operators';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  user = {} as User;
+  user: User;
   profilePictureUrl: string | null = null;
-  defaultProfilePicture = 'assets/icon/avatar.png';
+  defaultProfilePicture = 'assets/icon/avatar.png'; 
 
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef;
 
@@ -24,41 +24,42 @@ export class ProfilePage implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log('ngOnInit called');
     this.user = this.utilsSvc.getElementFromLocalStorage('user');
-    console.log('User loaded from local storage:', this.user);
-  }
-
-  ionViewWillEnter() {
-    console.log('ionViewWillEnter called');
-    this.getUser();
     this.loadProfilePicture();
   }
 
+  ionViewWillEnter() {
+    this.getUser();
+  }
+
   getUser() {
-    console.log('getUser called');
     this.user = this.utilsSvc.getElementFromLocalStorage('user');
-    console.log('User loaded from local storage:', this.user);
+    this.loadProfilePicture();
+    this.fetchUserFromFirebase();
   }
 
   loadProfilePicture() {
-    console.log('loadProfilePicture called');
-    console.log('Current user object:', this.user);
-    this.profilePictureUrl = this.user.profilePictureUrl ? this.user.profilePictureUrl : this.defaultProfilePicture;
-    console.log('Profile picture URL set to:', this.profilePictureUrl);
+    this.profilePictureUrl = this.user?.profilePictureUrl || this.defaultProfilePicture;
+  }
+
+  fetchUserFromFirebase() {
+    this.firebaseSvc.getUser(this.user.uid).subscribe((userData: User) => {
+      if (userData) {
+        this.user = { ...this.user, ...userData };
+        this.utilsSvc.setElementInLocalstorage('user', this.user);
+        this.loadProfilePicture();
+      }
+    });
   }
 
   async uploadProfilePicture(event: any) {
-    console.log('uploadProfilePicture called with event:', event);
     const file: File = event.target.files[0];
     if (file) {
       const filePath = `profile_pictures/${this.user.uid}_${file.name}`;
-      console.log('File path for upload:', filePath);
       const fileRef = this.storage.ref(filePath);
       const task = this.storage.upload(filePath, file);
 
       // Show loading indicator
-      console.log('Presenting loading indicator');
       this.utilsSvc.presentLoading();
 
       task
@@ -67,9 +68,7 @@ export class ProfilePage implements OnInit {
           finalize(async () => {
             try {
               this.profilePictureUrl = await fileRef.getDownloadURL().toPromise();
-              console.log('File uploaded, download URL:', this.profilePictureUrl);
               await this.updateUserProfilePicture(this.profilePictureUrl);
-              console.log('Profile picture URL updated');
               this.utilsSvc.presentToast({
                 message: 'Profile picture updated successfully!',
                 color: 'success',
@@ -83,26 +82,20 @@ export class ProfilePage implements OnInit {
                 duration: 2000,
               });
             } finally {
-              console.log('Dismissing loading indicator');
               this.utilsSvc.dismissLoading();
             }
           })
         )
         .subscribe();
-    } else {
-      console.log('No file selected for upload');
     }
   }
 
   async updateUserProfilePicture(url: string) {
-    console.log('updateUserProfilePicture called with URL:', url);
     const userUpdate = { profilePictureUrl: url };
     try {
       await this.firebaseSvc.updateUserProfile(this.user.uid, userUpdate);
-      console.log('User profile updated in Firestore');
       this.user.profilePictureUrl = url;
       this.utilsSvc.setElementInLocalstorage('user', this.user);
-      console.log('User profile updated in local storage:', this.user);
     } catch (error) {
       console.error('Error updating user profile:', error);
       throw error;
@@ -110,7 +103,6 @@ export class ProfilePage implements OnInit {
   }
 
   signOut() {
-    console.log('signOut called');
     this.utilsSvc.presentAlert({
       header: 'Cerrar Sesión',
       message: '¿Quieres cerrar sesión?',
@@ -122,7 +114,6 @@ export class ProfilePage implements OnInit {
         }, {
           text: 'Si, cerrar',
           handler: () => {
-            console.log('Sign out confirmed');
             this.firebaseSvc.signOut();
           }
         }

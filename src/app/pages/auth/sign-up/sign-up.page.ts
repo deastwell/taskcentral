@@ -4,6 +4,7 @@ import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { CustomValidators } from 'src/app/utils/custom-validators';
+import { TutorialService } from 'src/app/services/tutorial.service';  // Import the TutorialService
 
 @Component({
   selector: 'app-sign-up',
@@ -11,7 +12,6 @@ import { CustomValidators } from 'src/app/utils/custom-validators';
   styleUrls: ['./sign-up.page.scss'],
 })
 export class SignUpPage implements OnInit {
-
 
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(4)]),
@@ -22,13 +22,13 @@ export class SignUpPage implements OnInit {
 
   constructor(
     private firebaseSvc: FirebaseService,
-    private utilsSvc: UtilsService
+    private utilsSvc: UtilsService,
+    private tutorialService: TutorialService  // Inject the TutorialService
   ) { }
 
   ngOnInit() {
     this.confirmPasswordValidator()
   }
-
 
   confirmPasswordValidator() {
     this.form.controls.confirmPassword.setValidators([
@@ -41,7 +41,6 @@ export class SignUpPage implements OnInit {
 
   submit() {
     if (this.form.valid) {
-
       this.utilsSvc.presentLoading({ message: 'Registrando...'})
       this.firebaseSvc.signUp(this.form.value as User).then(async res => {
         console.log(res);
@@ -55,7 +54,9 @@ export class SignUpPage implements OnInit {
         }
 
         this.utilsSvc.setElementInLocalstorage('user', user);
-        this.utilsSvc.routerLink('/tabs/home')
+
+        // Set the tutorial flag
+        await this.tutorialService.setTutorialSeen(false);
 
         this.utilsSvc.dismissLoading();
 
@@ -67,8 +68,10 @@ export class SignUpPage implements OnInit {
         })
 
         this.form.reset();
-      }, error => {
 
+        // Navigate to the tutorial page
+        this.utilsSvc.routerLink('/tutorial');
+      }, error => {
         this.utilsSvc.dismissLoading();
         this.utilsSvc.presentToast({
           message: error,
@@ -76,11 +79,7 @@ export class SignUpPage implements OnInit {
           color: 'warning',
           icon: 'alert-circle-outline'
         })
-       
       })
-
-
     }
-
   }
 }

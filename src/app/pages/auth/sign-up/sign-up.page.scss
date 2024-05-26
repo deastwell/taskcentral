@@ -1,16 +1,23 @@
-
-.sign-up{
+.sign-up {
     padding: 50px;
-}
-
-ion-button{
+  }
+  
+  ion-button {
     width: 170px;
-}
-
-@media (min-width: 769px){
-
-    form{
-        width: 500px;
-        padding: 50px 10px;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar horizontalmente */
+    justify-content: center; /* Centrar verticalmente */
+    height: 100%; /* Ajustar la altura al 100% del contenedor */
+  }
+  
+  @media (min-width: 769px) {
+    form {
+      width: 500px;
+      padding: 50px 10px;
     }
-}
+  }
+  
