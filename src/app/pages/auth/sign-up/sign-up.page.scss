@@ -1,22 +1,37 @@
-.sign-up {
-    padding: 50px;
-  }
-  
-  ion-button {
-    width: 170px;
-  }
-  
-  .content {
+.content {
     display: flex;
     flex-direction: column;
     align-items: center; /* Centrar horizontalmente */
     justify-content: center; /* Centrar verticalmente */
-    height: 100%; /* Ajustar la altura al 100% del contenedor */
+    min-height: 100vh; /* Ajustar la altura al 100% del viewport */
+    padding: 16px; /* Añadir algo de padding para evitar que el contenido toque los bordes */
+    box-sizing: border-box;
+  }
+  
+  .d-flex-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar horizontalmente */
+    width: 100%;
+  }
+  
+  form {
+    width: 100%;
+    max-width: 500px; /* Ancho máximo del formulario */
+    padding: 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .validators {
+    width: 100%; /* Asegurarse de que los mensajes de validación ocupen todo el ancho del formulario */
+    text-align: left; /* Alinear el texto de los mensajes de validación a la izquierda */
   }
   
   @media (min-width: 769px) {
     form {
-      width: 500px;
       padding: 50px 10px;
     }
   }
