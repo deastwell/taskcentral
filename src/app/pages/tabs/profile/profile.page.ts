@@ -96,6 +96,7 @@ export class ProfilePage implements OnInit {
       await this.firebaseSvc.updateUserProfile(this.user.uid, userUpdate);
       this.user.profilePictureUrl = url;
       this.utilsSvc.setElementInLocalstorage('user', this.user);
+      this.loadProfilePicture(); // Ensure the profile picture is updated
     } catch (error) {
       console.error('Error updating user profile:', error);
       throw error;

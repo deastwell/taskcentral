@@ -50,7 +50,8 @@ export class SignUpPage implements OnInit {
         let user: User = {
           uid: res.user.uid,
           name: res.user.displayName,
-          email: res.user.email
+          email: res.user.email,
+          profilePictureUrl: null
         };
 
         this.utilsSvc.setElementInLocalstorage('user', user);
