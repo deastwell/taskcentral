@@ -34,9 +34,15 @@ export class ProfilePage implements OnInit {
 
   getUser() {
     this.user = this.utilsSvc.getElementFromLocalStorage('user');
+    // Set profilePictureUrl to null if it doesn't exist
+    if (!this.user.profilePictureUrl) {
+      this.user.profilePictureUrl = null;
+      this.utilsSvc.setElementInLocalstorage('user', this.user);
+    }
     this.loadProfilePicture();
     this.fetchUserFromFirebase();
   }
+
 
   loadProfilePicture() {
     this.profilePictureUrl = this.user?.profilePictureUrl || this.defaultProfilePicture;

@@ -137,14 +137,14 @@ export class HomePage implements OnInit {
         {
           name: 'showAll',
           type: 'radio',
-          label: 'Show All',
+          label: 'Mostrar todo',
           value: 'all',
           checked: true
         },
         {
           name: 'sortCompleted',
           type: 'radio',
-          label: 'Completed',
+          label: 'Completado',
           value: '99.9-100'
         },
         {
@@ -174,24 +174,24 @@ export class HomePage implements OnInit {
         {
           name: 'sortAsc',
           type: 'radio',
-          label: 'Ascending',
+          label: 'Orden ascendiente',
           value: 'asc'
         },
         {
           name: 'sortDesc',
           type: 'radio',
-          label: 'Descending',
+          label: 'Orden descendiente',
           value: 'desc'
         },
         
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Cancelar',
           role: 'cancel',
         },
         {
-          text: 'Apply',
+          text: 'Aplicar',
           handler: (data) => {
             console.log('Selected filter/sort option:', data);
             this.applyFilterSort(data);
