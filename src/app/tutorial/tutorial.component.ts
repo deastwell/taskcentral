@@ -13,6 +13,6 @@ export class TutorialComponent {
 
   finishTutorial() {
     this.tutorialService.setTutorialSeen(true);
-    this.navCtrl.navigateRoot('/tabs/home');
+    this.navCtrl.navigateRoot('/tabs/home'); // Navigate to the first tab directly
   }
 }

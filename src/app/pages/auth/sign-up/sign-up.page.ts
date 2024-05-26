@@ -4,7 +4,7 @@ import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { CustomValidators } from 'src/app/utils/custom-validators';
-import { TutorialService } from 'src/app/services/tutorial.service';  // Import the TutorialService
+import { TutorialService } from 'src/app/services/tutorial.service'; // Import TutorialService
 
 @Component({
   selector: 'app-sign-up',
@@ -18,40 +18,40 @@ export class SignUpPage implements OnInit {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
     confirmPassword: new FormControl(''),
-  })
+  });
 
   constructor(
     private firebaseSvc: FirebaseService,
     private utilsSvc: UtilsService,
-    private tutorialService: TutorialService  // Inject the TutorialService
+    private tutorialService: TutorialService // Inject TutorialService
   ) { }
 
   ngOnInit() {
-    this.confirmPasswordValidator()
+    this.confirmPasswordValidator();
   }
 
   confirmPasswordValidator() {
     this.form.controls.confirmPassword.setValidators([
       Validators.required,
       CustomValidators.matchValues(this.form.controls.password)
-    ])
+    ]);
 
     this.form.controls.confirmPassword.updateValueAndValidity();
   }
 
   submit() {
     if (this.form.valid) {
-      this.utilsSvc.presentLoading({ message: 'Registrando...'})
+      this.utilsSvc.presentLoading({ message: 'Registrando...' });
       this.firebaseSvc.signUp(this.form.value as User).then(async res => {
         console.log(res);
 
-        await this.firebaseSvc.updateUser({ displayName: this.form.value.name })
+        await this.firebaseSvc.updateUser({ displayName: this.form.value.name });
 
         let user: User = {
           uid: res.user.uid,
           name: res.user.displayName,
           email: res.user.email
-        }
+        };
 
         this.utilsSvc.setElementInLocalstorage('user', user);
 
@@ -65,7 +65,7 @@ export class SignUpPage implements OnInit {
           duration: 1500,
           color: 'primary',
           icon: 'person-outline'
-        })
+        });
 
         this.form.reset();
 
@@ -74,12 +74,12 @@ export class SignUpPage implements OnInit {
       }, error => {
         this.utilsSvc.dismissLoading();
         this.utilsSvc.presentToast({
-          message: error,
+          message: error.message,
           duration: 5000,
           color: 'warning',
           icon: 'alert-circle-outline'
-        })
-      })
+        });
+      });
     }
   }
 }

@@ -8,10 +8,14 @@ export class TutorialService {
   private tutorialSeenKey = 'tutorialSeen';
 
   constructor(private storage: Storage) {
-    this.storage.create();
+    this.init();
   }
 
-  async setTutorialSeen(seen: boolean) {
+  async init() {
+    await this.storage.create();
+  }
+
+  async setTutorialSeen(seen: boolean = true) {
     await this.storage.set(this.tutorialSeenKey, seen);
   }
 

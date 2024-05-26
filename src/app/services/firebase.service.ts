@@ -10,6 +10,7 @@ import { updateDoc, doc, Firestore } from '@angular/fire/firestore';
 import { Note } from '../models/note.model';
 import { Observable } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,7 +24,7 @@ export class FirebaseService {
     private afAuth: AngularFireAuth
   ) { }
 
-  //========= Authentication ==========
+  //========= Autenticación ==========
 
   login(user: User) {
     return this.auth.signInWithEmailAndPassword(user.email, user.password);
@@ -41,16 +42,16 @@ export class FirebaseService {
   getAuthState() {
     return this.auth.authState;
   }
+  
+  getUser(uid: string): Observable<User> {
+    return this.firestore.collection('users').doc<User>(uid).valueChanges();
+  }
 
   async signOut() {
     await this.auth.signOut();
     localStorage.clear(); 
     this.utilsSvc.routerLink('/auth');
     localStorage.removeItem('user');
-  }
-
-  getUser(uid: string): Observable<User> {
-    return this.firestore.collection('users').doc<User>(uid).valueChanges();
   }
 
   getSubcollection(path: string, subcollectionName: string) {
@@ -105,8 +106,20 @@ export class FirebaseService {
     }
   }
 
-  updateUserProfile(uid: string, data: any) {
+  async updateUserProfile(uid: string, data: any) {
     console.log(`Updating user ${uid} with data:`, data);
-    return this.firestore.collection('users').doc(uid).update(data);
+    try {
+      const userRef = this.firestore.collection('users').doc(uid);
+      const docSnapshot = await userRef.get().toPromise();
+
+      if (docSnapshot.exists) {
+        await userRef.update(data);
+      } else {
+        await userRef.set(data); 
+      }
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      throw error;
+    }
   }
 }
